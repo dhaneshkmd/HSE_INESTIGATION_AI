@@ -1,0 +1,6 @@
+{
+  "name": "HSE IntelliInvestigate AI",
+  "description": "AI-powered incident investigation, multi-methodology root cause analysis, and risk intelligence platform for enterprise industrial safety.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

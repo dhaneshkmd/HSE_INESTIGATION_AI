@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Roboto", "Arial", sans-serif;
+  --font-display: "Roboto", "Arial", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-cyber-dark: #121212;
+  --color-cyber-card: rgba(30, 30, 30, 0.65);
+  --color-cyber-border: rgba(255, 255, 255, 0.12);
+  --color-brand-cyan: #cc0000;
+  --color-brand-yellow: #f59e0b;
+  --color-brand-red: #cc0000;
+  --color-brand-orange: #990000;
+  --color-brand-green: #10b981;
+}
+
+/* Custom styles for professional glassmorphism and control interfaces */
+@layer utilities {
+  .glass-card {
+    background: rgba(30, 30, 30, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  }
+  
+  .glass-card-interactive {
+    background: rgba(30, 30, 30, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .glass-card-interactive:hover {
+    background: rgba(45, 45, 45, 0.85);
+    border-color: rgba(204, 0, 0, 0.4);
+    box-shadow: 0 12px 40px 0 rgba(204, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 15px rgba(204, 0, 0, 0.4);
+  }
+
+  .glow-yellow {
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 15px rgba(204, 0, 0, 0.4);
+  }
+
+  .glow-orange {
+    box-shadow: 0 0 15px rgba(153, 0, 0, 0.4);
+  }
+}
+
+/* Base body style */
+body {
+  background-color: #121212;
+  color: #f1f5f9;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0f1d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Neon animated border scanline */
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(0, 240, 255, 0.1); }
+  50% { border-color: rgba(0, 240, 255, 0.5); }
+}
+
+.animate-border-glow {
+  animation: borderGlow 4s infinite ease-in-out;
+}
+
+/* Printable layout styling */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .glass-card {
+    background: transparent !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    color: black !important;
+  }
+}
