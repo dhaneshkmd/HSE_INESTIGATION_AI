@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   Shield, Activity, Database, AlertOctagon, Sparkles, 
@@ -23,6 +23,7 @@ export default function App() {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // NVIDIA 5 Intelligent Features Tab states
+  const [isPending, startTransition] = useTransition();
   const [currentTab, setCurrentTab] = useState("Home");
   const [autoFillData, setAutoFillData] = useState<any>(null);
   const [rcaResults, setRcaResults] = useState<string>("");
@@ -216,10 +217,12 @@ export default function App() {
             <button
               key={tab.id}
               onClick={() => {
-                setCurrentTab(tab.id);
-                if (tab.id !== "Home") {
-                  setSelectedIncident(null);
-                }
+                startTransition(() => {
+                  setCurrentTab(tab.id);
+                  if (tab.id !== "Home") {
+                    setSelectedIncident(null);
+                  }
+                });
               }}
               className={`px-4 py-2 rounded-xl text-[11px] font-mono uppercase tracking-tight transition-all cursor-pointer ${
                 currentTab === tab.id
@@ -266,8 +269,10 @@ export default function App() {
               >
                 <DocumentParser 
                   onAutoFillRca={(data) => {
-                    setAutoFillData(data);
-                    setCurrentTab("Rca");
+                    startTransition(() => {
+                      setAutoFillData(data);
+                      setCurrentTab("Rca");
+                    });
                   }} 
                 />
               </motion.div>
@@ -282,13 +287,17 @@ export default function App() {
                 <RcaEngine 
                   autoFillData={autoFillData}
                   onNavigateToReport={(rca, details) => {
-                    setRcaResults(rca);
-                    setFormDetails(details);
-                    setCurrentTab("Report");
+                    startTransition(() => {
+                      setRcaResults(rca);
+                      setFormDetails(details);
+                      setCurrentTab("Report");
+                    });
                   }}
                   onNavigateToCapa={(items) => {
-                    setCapaList(items);
-                    setCurrentTab("Capa");
+                    startTransition(() => {
+                      setCapaList(items);
+                      setCurrentTab("Capa");
+                    });
                   }}
                 />
               </motion.div>
