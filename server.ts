@@ -616,26 +616,43 @@ app.post("/api/analyze", async (req, res) => {
         })
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content || "";
+        return res.json({ content });
+      } else {
         const errText = await response.text();
         console.error("NVIDIA API error response:", errText);
-        throw new Error(`NVIDIA API returned status ${response.status}`);
       }
-
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content || "";
-      return res.json({ content });
-
     } catch (error: any) {
-      console.error("NVIDIA API fetch failed, falling back to simulated output.", error);
-      const simulatedResponse = getSimulatedOutput(feature, sanitizedPrompt, extraData);
-      return res.json({ content: simulatedResponse, warning: "NVIDIA API call failed, fell back to high-quality simulation." });
+      console.error("NVIDIA API fetch failed, trying Gemini fallback.", error);
     }
-  } else {
-    console.log(`No NVIDIA_API_KEY found. Generating simulated response for feature: ${feature}`);
-    const simulatedResponse = getSimulatedOutput(feature, sanitizedPrompt, extraData);
-    return res.json({ content: simulatedResponse, warning: "No NVIDIA_API_KEY found, running simulated engine." });
   }
+
+  // Fallback to Gemini if available
+  if (process.env.GEMINI_API_KEY) {
+    try {
+      console.log(`Using Gemini API to process feature: ${feature}`);
+      const ai = getGeminiClient();
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: sanitizedPrompt,
+        config: {
+          systemInstruction: `${sanitizedSystem}\n\n[Context: You are simulating the NVIDIA Nemotron HSE Cognitive Core. Provide exceptionally high-quality, professional, and detailed compliance, investigation, and root cause analysis responses based on Saudi Aramco GI standards, ADNOC HSEMS, and ISO 45001. Ensure answers are well-structured in Markdown.]`,
+          temperature: 0.65,
+        }
+      });
+      const content = response.text || "";
+      return res.json({ content });
+    } catch (geminiError: any) {
+      console.error("Gemini API fallback failed, using simulated output:", geminiError);
+    }
+  }
+
+  // Ultimate static simulated fallback
+  console.log(`No API keys or API calls succeeded. Generating simulated response for feature: ${feature}`);
+  const simulatedResponse = getSimulatedOutput(feature, sanitizedPrompt, extraData);
+  return res.json({ content: simulatedResponse, warning: "Running local simulated engine fallback." });
 });
 
 // 1. AI INCIDENT INVESTIGATION ENGINE: Performs full multi-methodology analysis on incident data
